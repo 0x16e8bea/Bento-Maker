@@ -158,3 +158,30 @@
   left: 0;
   z-index: 1;
 }
+
+.save-button,
+.load-button {
+  position: fixed;
+  bottom: 8px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  z-index: 1000;
+}
+
+.save-button {
+  left: 8px;
+}
+
+.load-button {
+  left: 120px;
+}
+
+.save-button:hover,
+.load-button:hover {
+  background-color: #45a049;
+}

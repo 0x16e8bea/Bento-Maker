@@ -1,23 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface GridItemProps {
   number: number;
   onResize: (direction: string) => void;
+  onUpdateData: (data: Partial<GridItemData>) => void;
   width: number;
   height: number;
+  image: string | null;
+  link: string | null;
 }
 
-const GridItem: React.FC<GridItemProps> = ({ number, onResize, width, height }) => {
-  const [image, setImage] = useState<string | null>(null);
-  const [link, setLink] = useState<string | null>(null);
+interface GridItemData {
+  image: string | null;
+  link: string | null;
+}
+
+const GridItem: React.FC<GridItemProps> = ({ number, onResize, onUpdateData, width, height, image: initialImage, link: initialLink }) => {
+  const [image, setImage] = useState<string | null>(initialImage);
+  const [link, setLink] = useState<string | null>(initialLink);
   const [isEditingLink, setIsEditingLink] = useState<boolean>(false);
+
+  useEffect(() => {
+    setImage(initialImage);
+    setLink(initialLink);
+  }, [initialImage, initialLink]);
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setImage(e.target?.result as string);
+        const newImage = e.target?.result as string;
+        setImage(newImage);
+        onUpdateData({ image: newImage });
       };
       reader.readAsDataURL(file);
     }
@@ -28,9 +43,13 @@ const GridItem: React.FC<GridItemProps> = ({ number, onResize, width, height }) 
   };
 
   const handleLinkBlur = () => {
-    if (link && !link.startsWith('http://') && !link.startsWith('https://')) {
-      setLink('http://' + link);
+    let newLink = link;
+    if (newLink && !newLink.startsWith('http://') && !newLink.startsWith('https://')) {
+      newLink = 'http://' + newLink;
     }
+    setLink(newLink);
+    onUpdateData({ link: newLink });
+    setIsEditingLink(false);
   };
 
   const style = {
