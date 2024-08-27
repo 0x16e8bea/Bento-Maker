@@ -6,7 +6,7 @@ import GridItem from './GridItem';
 import FloatingButton from './FloatingButton';
 
 const BentoGrid: React.FC = () => {
-  const [items] = useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8]);
+  const [items, setItems] = useState<number[]>([]);
   const gridRef = useRef<HTMLDivElement>(null);
   const muuriInstance = useRef<Muuri | null>(null);
 
@@ -14,9 +14,9 @@ const BentoGrid: React.FC = () => {
     if (gridRef.current && !muuriInstance.current) {
       muuriInstance.current = new Muuri(gridRef.current, {
         dragEnabled: true,
-        items: '.item', // Update the selector
+        items: '.item',
       });
-      muuriInstance.current.layout(); // Call layout after initialization
+      muuriInstance.current.layout();
     }
   }, []);
 
@@ -49,11 +49,26 @@ const BentoGrid: React.FC = () => {
   };
 
   const updateItemSize = (item: HTMLElement) => {
-    const margin = 10; // Assuming a margin of 10px as per your CSS
+    const margin = 10;
     const width = parseInt(item.getAttribute('data-w') || '1') * (100 + margin) - margin;
     const height = parseInt(item.getAttribute('data-h') || '1') * (100 + margin) - margin;
     item.style.width = `${width}px`;
     item.style.height = `${height}px`;
+  };
+
+  const addItem = () => {
+    setItems((prevItems) => {
+      const newItems = [...prevItems, prevItems.length + 1];
+      setTimeout(() => {
+        if (gridRef.current && muuriInstance.current) {
+          const newItem = gridRef.current.children[gridRef.current.children.length - 1] as HTMLElement;
+          if (!muuriInstance.current.getItems(newItem).length) {
+            muuriInstance.current.add(newItem);
+          }
+        }
+      }, 0);
+      return newItems;
+    });
   };
 
   return (
@@ -74,7 +89,7 @@ const BentoGrid: React.FC = () => {
           );
         })}
       </div>
-      {/* Remove the FloatingButton component */}
+      <FloatingButton onClick={addItem} />
     </div>
   );
 };
