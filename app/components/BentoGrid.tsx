@@ -59,9 +59,20 @@ const BentoGrid: React.FC = () => {
   return (
     <div className="grid-container">
       <div className="grid" ref={gridRef}>
-        {items.map((number, index) => (
-          <GridItem key={number} number={number} onResize={(direction) => resizeItem(index, direction)} />
-        ))}
+        {items.map((number, index) => {
+          const item = gridRef.current?.children[index] as HTMLElement;
+          const width = parseInt(item?.getAttribute('data-w') || '1');
+          const height = parseInt(item?.getAttribute('data-h') || '1');
+          return (
+            <GridItem
+              key={number}
+              number={number}
+              width={width}
+              height={height}
+              onResize={(direction) => resizeItem(index, direction)}
+            />
+          );
+        })}
       </div>
       {/* Remove the FloatingButton component */}
     </div>
